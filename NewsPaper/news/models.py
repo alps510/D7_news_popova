@@ -8,7 +8,6 @@ it = 'IT'
 sport = 'SP'
 medicine = 'MED'
 culture = 'CUL'
-
 article = 'A'
 news = 'N'
 
@@ -18,7 +17,6 @@ TAG_LIST = [
     (medicine, 'Медицина'),
     (culture, 'Культура')
 ]
-
 POST_LIST = [
     (article, 'Статья'),
     (news, 'Новость')
@@ -44,6 +42,15 @@ class Author(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=3, unique=True, choices=TAG_LIST)
+    subscribers = models.ManyToManyField(User, through='UserCategory')
+
+    def __str__(self):
+        return f'{self.name}'
+
+
+class UserCategory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
 
 class Post(models.Model):
@@ -60,7 +67,7 @@ class Post(models.Model):
         if len(self.content) > 124:
             return self.content[:124] + '...'
         else:
-            return len(self.content)
+            return self.content
 
     def like(self):
         self.rating += 1
@@ -78,7 +85,6 @@ class Post(models.Model):
             return reverse('post_detail', args=[str(self.id)])
         if self.post == 'A':
             return reverse('article_detail', args=[str(self.id)])
-
 
 
 class Comment(models.Model):

@@ -11,3 +11,6 @@ class IndexView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context['is_not_author'] = not self.request.user.groups.filter(name='author').exists()
         return context
+
+
+

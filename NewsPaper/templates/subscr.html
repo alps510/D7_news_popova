@@ -1,0 +1,15 @@
+{% extends 'flatpages/default.html' %}
+{% block content %}
+<body>
+<form action="/posts/subscribed/" method="POST">
+    {% csrf_token %}
+   <p>Оформить подписку</p>
+    {% for ctg in categories %}
+   <p><input type="checkbox" name="{{ ctg.pk }}" > {{ ctg }}</p>
+
+    {% endfor %}
+   <p><button type="submit">Отправить</button></p>
+  </form>
+{{ x  }}
+</body>
+{% endblock %}

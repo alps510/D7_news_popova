@@ -1,9 +1,10 @@
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Post
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
+from .models import Post, Category, UserCategory
 from .forms import PostForm
 from django.urls import reverse_lazy
 from .filters import PostFilter
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.shortcuts import redirect
 
 
 class PostsList(ListView):
@@ -83,3 +84,24 @@ class PostSearch(ListView):
         context = super().get_context_data(**kwargs)
         context['filterset'] = self.filterset
         return context
+
+
+class CategoryView(TemplateView):
+    template_name = 'subscr.html'
+    model = Category
+    context_object_name = 'ctgs'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        return context
+
+
+def subscribed(request):
+    user = request.user
+    ctg_checked = request.POST.dict().keys()
+
+    for i in range(1, 5):
+        if str(i) in ctg_checked:
+            Category.objects.filter(pk=i)[0].subscribers.add(user.pk)
+    return redirect('/posts/subscr')
